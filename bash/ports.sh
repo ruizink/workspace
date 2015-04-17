@@ -10,7 +10,7 @@ function _isPortAvailable () {
   local lsof=$(which lsof 2>&1)
   [ ! -x "$lsof" ] && echo "Error: Missing lsof utility: Couldn't check for port availability." && exit 127
   $DEBUG && echo "Checking for port ${port} availability..."
-  $lsof -i -n -P | grep LISTEN | grep -q ":${port}"
+  $lsof -n -P -i ":${port}" | grep -q LISTEN
   if [ $? -ne 0 ]; then
     $DEBUG && echo "Port ${port} is available."
     return 0
