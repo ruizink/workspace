@@ -34,13 +34,14 @@ function _createWebServer () {
     [ "$BIND_PORT_TIMEOUT" -le "$elapsed_time" ] && echo "Timeout: Couldn't bind port ${port} after ${BIND_PORT_TIMEOUT} seconds." && return 1
     echo "Done." && return 0
   fi
-  return 1
+  echo "Error: Couldn't launch WebServer." && return 1
 }
 
 function _launchWebServer () {
   local name=$1
   for port in $(seq "$PORT_RANGE_MIN" "$PORT_RANGE_MAX"); do
-    _isPortAvailable "$port" && echo "Found available port: ${port}." && _createWebServer "$name" "$port" && return 0
+    _isPortAvailable "$port" || continue
+    echo "Found available port: ${port}." && _createWebServer "$name" "$port" && return 0 || return 1
   done
   echo "Error: Couldn't find available ports within the specified range [${PORT_RANGE_MIN}..${PORT_RANGE_MAX}]" && return 1
 }
